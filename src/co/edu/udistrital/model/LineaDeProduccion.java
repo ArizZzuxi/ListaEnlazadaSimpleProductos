@@ -32,13 +32,36 @@ public class LineaDeProduccion <T> {
 		return true;
 	}
 	
-	public boolean extraerLotesDefectuosos (double PorcentajeMinimo){
-		PorcentajeMinimo = 30;
+	public ProductosRechazados extraerLotesDefectuosos (double PorcentajeMinimo){
 		
-		if (cabeza == null)
-			return false;
+		ProductosRechazados rechazados = new ProductosRechazados();
+		
+		while (cabeza != null && ((LoteChocolate) cabeza.getDato()).getPorcentajeCacao() < PorcentajeMinimo) {
+			LoteChocolate loteExtraido = (LoteChocolate) cabeza.getDato();
+			loteExtraido.setAprobado(false);
+			rechazados.agregarElemento(loteExtraido);
 			
-		return false;
+			cabeza = cabeza.getSiguiente();
+			tamanio--;
+		}
+		
+		if(cabeza!=null) {
+			NodoLote <T> actual = cabeza;
+			
+			while (actual.getSiguiente() != null) {
+				LoteChocolate loteExtraido = (LoteChocolate) actual.getSiguiente().getDato();
+				loteExtraido.setAprobado(false);
+				rechazados.agregarElemento(loteExtraido);
+				
+				actual.setSiguiente(actual.getSiguiente().getSiguiente());
+				tamanio--;
+			}
+			
+		
+		}
+		
+		return rechazados;
+		
 	}
 	
 	public String verTodos() {
